@@ -103,9 +103,7 @@ gulp.task("scripts", () =>
   .pipe($.sourcemaps.write())
   .pipe(gulp.dest(".tmp/scripts"))
   .pipe($.concat("main.min.js"))
-  .pipe($.uglify({
-    preserveComments: "some"
-  }))
+  .pipe($.uglify())
   // Output files
   .pipe($.size({
     title: "scripts"
@@ -126,6 +124,20 @@ gulp.task('js', () =>
   .pipe($.sourcemaps.write('.'))
   .pipe(gulp.dest("dist/scripts"))
   .pipe(gulp.dest(".tmp/scripts"))
+);
+
+// Js task 
+gulp.task('js-min', () =>
+gulp.src('app/js/**/*.js')
+.pipe($.sourcemaps.init())
+.pipe($.babel({
+  presets: ['env']
+}))
+.pipe($.concat('app.min.js'))
+.pipe($.uglify())
+.pipe($.sourcemaps.write('.'))
+.pipe(gulp.dest("dist/scripts"))
+.pipe(gulp.dest(".tmp/scripts"))
 );
 
 // Scan your HTML for assets & optimize them
@@ -217,7 +229,7 @@ gulp.task("default", ["js", "scripts", "styles", "hbs"], () => {
   browserSync({
     notify: false,
     // Customize the Browsersync console logging prefix
-    logPrefix: "WSK",
+    logPrefix: "➡️ Oh-Yeahhhhhhh" ,
     // Allow scroll syncing across breakpoints
     //scrollElementMapping: ['main', '.mdl-layout'],
     // Run as an https by uncommenting 'https: true'
@@ -240,7 +252,7 @@ gulp.task("default", ["js", "scripts", "styles", "hbs"], () => {
 gulp.task("serve:dist", ["default"], () =>
   browserSync({
     notify: false,
-    logPrefix: "WSK",
+    logPrefix: "Build ⛴",
     server: "dist",
     port: 3001
   })
@@ -255,7 +267,7 @@ gulp.task("deploy", [], function () {
 
 // Build production files, the default task
 gulp.task("build", ["clean"], cb =>
-  runSequence("styles", ["html", "js", "scripts", "images", "copy"], "generate-service-worker", cb)
+  runSequence("styles", ["html", "js-min", "scripts", "images", "copy"], "generate-service-worker", cb)
 );
 
 // Run PageSpeed Insights
