@@ -118,7 +118,8 @@ gulp.task('js', () =>
   gulp.src('app/js/**/*.js')
   .pipe($.sourcemaps.init())
   .pipe($.babel({
-    presets: ['env']
+    presets: ['env'],
+    plugins: ['transform-runtime']
   }))
   .pipe($.concat('app.js'))
   .pipe($.sourcemaps.write('.'))
@@ -128,16 +129,17 @@ gulp.task('js', () =>
 
 // Js task 
 gulp.task('js-min', () =>
-gulp.src('app/js/**/*.js')
-.pipe($.sourcemaps.init())
-.pipe($.babel({
-  presets: ['env']
-}))
-.pipe($.concat('app.min.js'))
-.pipe($.uglify())
-.pipe($.sourcemaps.write('.'))
-.pipe(gulp.dest("dist/scripts"))
-.pipe(gulp.dest(".tmp/scripts"))
+  gulp.src('app/js/**/*.js')
+  .pipe($.sourcemaps.init())
+  .pipe($.babel({
+    presets: ['env'],
+    plugins: ['transform-runtime']
+  }))
+  .pipe($.concat('app.min.js'))
+  .pipe($.uglify())
+  .pipe($.sourcemaps.write('.'))
+  .pipe(gulp.dest("dist/scripts"))
+  .pipe(gulp.dest(".tmp/scripts"))
 );
 
 // Scan your HTML for assets & optimize them
@@ -229,7 +231,7 @@ gulp.task("default", ["js", "scripts", "styles", "hbs"], () => {
   browserSync({
     notify: false,
     // Customize the Browsersync console logging prefix
-    logPrefix: "➡️ Oh-Yeahhhhhhh" ,
+    logPrefix: "➡️ Oh-Yeahhhhhhh",
     // Allow scroll syncing across breakpoints
     //scrollElementMapping: ['main', '.mdl-layout'],
     // Run as an https by uncommenting 'https: true'
@@ -258,10 +260,16 @@ gulp.task("serve:dist", ["default"], () =>
   })
 );
 
-gulp.task("deploy", [], function () {
+gulp.task("surge", [], function () {
+  if (!process.argv[4]) {
+    console.log("Error!!! check syntax -> : gulp surge -d [name] ");
+    console.log("Ex: gulp surge -d maple-gulp");
+    process.exit(0);
+  }
+  console.log("Input only name : ex maple-gulp");
   return surge({
     project: "./dist", // Path to your static build directory
-    domain: "dental-duy.surge.sh" // Your domain or Surge subdomain
+    domain: process.argv[4] + ".surge.sh" // Your domain or Surge subdomain
   });
 });
 
@@ -271,15 +279,24 @@ gulp.task("build", ["clean"], cb =>
 );
 
 // Run PageSpeed Insights
-gulp.task("pagespeed", cb =>
-  // Update the below URL to the public URL of your site
-  pagespeed(
-    "http://cuduy.xyz", {
-      strategy: "desktop"
-    },
-    cb
-  )
-);
+// gulp pagespeed -m [desktop or mobile]
+gulp.task("pagespeed", cb => {
+  console.log("Input domain to check [ex: maplestudio.vn]: ");
+  var stdin = process.openStdin();
+  stdin.addListener("data", function(d) {
+    console.log("Wait...");
+      var _d = d.toString().trim();
+      pagespeed(
+        "http://"+ _d, {
+          strategy: process.argv[4] 
+        },
+        cb
+      ).then(()=>{
+        console.log("DONE!");
+        process.exit(0);
+      });
+    });
+});
 
 // Copy over the scripts that are used in importScripts as part of the generate-service-worker task.
 gulp.task("copy-sw-scripts", () => {

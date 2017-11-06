@@ -1,7 +1,7 @@
 # Maple-Gulp * Sass - Handlebars template :zap:
 
 ---
- [![Version](https://img.shields.io/badge/version-0.1-brightgreen.svg)]()
+ [![Version](https://img.shields.io/badge/version-0.2-brightgreen.svg)]()
 
  ![Maple](https://img.shields.io/badge/Maple-Studio-orange.svg)
 
@@ -49,6 +49,7 @@
 + Local dev : ```gulp ```
 + Build production : ``` gulp build``` 
 + Server production build: ``` gulp serve:dist ```
++ Deploy to surge server : ``` gulp surge -d [name of project] ```
 
 
-## (C) 2017 - 001123 - maplestudio :memo:   
+## (C) 11/2017 - 001123 - maplestudio :memo:   
