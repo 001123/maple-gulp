@@ -227,7 +227,7 @@ gulp.task("clean", () => del([".tmp", "dist/*", "!dist/.git"], {
 }));
 
 // Default Watch files for changes & reload
-gulp.task("default", ["js", "scripts", "styles", "hbs"], () => {
+gulp.task("default", ["clean", "js", "scripts", "styles", "hbs"], () => {
   browserSync({
     notify: false,
     // Customize the Browsersync console logging prefix
